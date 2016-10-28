@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("JiraSuite.Netsuite")]
+[assembly: AssemblyTitle("t1")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("JiraSuite.Netsuite")]
+[assembly: AssemblyProduct("t1")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f1296ea0-7b0d-442b-890f-bbf7ca38288b")]
+[assembly: Guid("135830a9-9af0-4382-bf94-bdd733831281")]
 
 // Version information for an assembly consists of the following four values:
 //

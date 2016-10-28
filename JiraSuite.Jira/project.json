@@ -1,13 +1,19 @@
-﻿{
+{
   "version": "1.0.0-*",
   "description": "JiraSuite.Jira Class Library",
   "authors": [ "mwillis" ],
   "tags": [ "" ],
   "projectUrl": "",
   "licenseUrl": "",
-
   "frameworks": {
-    "net451": { },
+    "net451": {
+      "dependencies": {
+        "TechTalk.JiraRestClient": "2.5.0"
+      },
+      "frameworkAssemblies": {
+        "System.configuration": "4.0.0.0"
+      }
+    },
     "dotnet5.4": {
       "dependencies": {
         "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -17,5 +23,8 @@
         "System.Threading": "4.0.11-beta-23516"
       }
     }
+  },
+  "dependencies": {
+    "Microsoft.IdentityModel.Protocols": "2.0.0-rc1-211161024"
   }
 }

@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.Web", "JiraSuite\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.Tests", "JiraSuite.Tests\JiraSuite.Tests.csproj", "{BDC9B634-EC14-405C-84C8-4F8AF1D86165}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "JiraSuite.Jira", "JiraSuite.Jira\JiraSuite.Jira.xproj", "{D60C1D13-A69D-4ADE-B22F-2CB323819D61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.Jira", "t1\JiraSuite.Jira.csproj", "{135830A9-9AF0-4382-BF94-BDD733831281}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "JiraSuite.Netsuite", "JiraSuite.Netsuite\JiraSuite.Netsuite.xproj", "{540275F6-BC7C-4099-BA7D-89CF54837AB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.DataAccess", "JiraSuite.DataAccess\JiraSuite.DataAccess.csproj", "{CC6C9C3D-60D3-405C-AA9F-9E2F2921B44A}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "JiraSuite.DataAccess", "JiraSuite.DataAccess\JiraSuite.DataAccess.sqlproj", "{57CE4960-5CE0-4DFD-A9AD-380C495D2958}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.Netsuite", "JiraSuite.Netsuite\JiraSuite.Netsuite.csproj", "{F1296EA0-7B0D-442B-890F-BBF7CA38288B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,20 +27,18 @@ Global
 		{BDC9B634-EC14-405C-84C8-4F8AF1D86165}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDC9B634-EC14-405C-84C8-4F8AF1D86165}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDC9B634-EC14-405C-84C8-4F8AF1D86165}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D60C1D13-A69D-4ADE-B22F-2CB323819D61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D60C1D13-A69D-4ADE-B22F-2CB323819D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D60C1D13-A69D-4ADE-B22F-2CB323819D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D60C1D13-A69D-4ADE-B22F-2CB323819D61}.Release|Any CPU.Build.0 = Release|Any CPU
-		{540275F6-BC7C-4099-BA7D-89CF54837AB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{540275F6-BC7C-4099-BA7D-89CF54837AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{540275F6-BC7C-4099-BA7D-89CF54837AB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{540275F6-BC7C-4099-BA7D-89CF54837AB4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57CE4960-5CE0-4DFD-A9AD-380C495D2958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57CE4960-5CE0-4DFD-A9AD-380C495D2958}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57CE4960-5CE0-4DFD-A9AD-380C495D2958}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{57CE4960-5CE0-4DFD-A9AD-380C495D2958}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57CE4960-5CE0-4DFD-A9AD-380C495D2958}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57CE4960-5CE0-4DFD-A9AD-380C495D2958}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{135830A9-9AF0-4382-BF94-BDD733831281}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{135830A9-9AF0-4382-BF94-BDD733831281}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{135830A9-9AF0-4382-BF94-BDD733831281}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{135830A9-9AF0-4382-BF94-BDD733831281}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC6C9C3D-60D3-405C-AA9F-9E2F2921B44A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC6C9C3D-60D3-405C-AA9F-9E2F2921B44A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC6C9C3D-60D3-405C-AA9F-9E2F2921B44A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC6C9C3D-60D3-405C-AA9F-9E2F2921B44A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1296EA0-7B0D-442B-890F-BBF7CA38288B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1296EA0-7B0D-442B-890F-BBF7CA38288B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1296EA0-7B0D-442B-890F-BBF7CA38288B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1296EA0-7B0D-442B-890F-BBF7CA38288B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
