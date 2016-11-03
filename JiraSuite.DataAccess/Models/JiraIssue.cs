@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JiraSuite.DataAccess.EntityFramework;
 using TechTalk.JiraRestClient;
 using static JiraSuite.DataAccess.Models.JiraTypeHelper;
 
@@ -11,24 +14,31 @@ namespace JiraSuite.DataAccess.Models
 {
     public class JiraIssue
     {
-        [Key]
+        
         public string IssueId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string IssueKey { get; set; }
         public string Description { get; set; }
         public string Summary { get; set; }
         public List<JiraIssue> IssueLinks { get; set; }
         public string Reporter { get; set; }
         public string Assignee { get; set; }
+        public string NetsuiteTicketNumber { get; set; }
         public string Status { get; set; }
         public List<string> Comments { get; set; }
         public SoftwareType SoftwareType { get; set; }
         public JiraIssueType IssueType { get; set; }
-        public DateTime LastRefreshTime { get; set; }
-        public virtual List<NetsuiteTicket> NetsuiteTickets { get; set; }
+
+        public DateTime? LastRefreshTime { get; set; }
+        //{ }// return LastRefreshTime == DateTime.MinValue ? Convert.ToDateTime(SqlDateTime.MinValue) : LastRefreshTime; }
+        //set; { }
+        //}
+        public virtual List<NetsuiteApiResult> NetsuiteTickets { get; set; }
 
         #region Constructors
 
-        private JiraIssue() { }
+        public JiraIssue() { }
         
         public JiraIssue(Issue issue)
         {
@@ -36,7 +46,8 @@ namespace JiraSuite.DataAccess.Models
             IssueKey = issue.key;
             Comments = new List<string>();
             IssueLinks = new List<JiraIssue>();
-            NetsuiteTickets = new List<NetsuiteTicket>();
+            NetsuiteTicketNumber = issue.fields.customfield_10080;
+            NetsuiteTickets = new List<NetsuiteApiResult>();
 
             foreach (var prop in typeof(IssueFields).GetProperties())
             {

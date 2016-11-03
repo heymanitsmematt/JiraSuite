@@ -7,7 +7,10 @@ namespace JiraSuite.DataAccess.Models
         public enum SoftwareType
         {
             MCLUB,
-            MOSO
+            MOSO,
+            MOSO2,
+            MOSO3,
+            REP
         }
 
         public enum JiraIssueType

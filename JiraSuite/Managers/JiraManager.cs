@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
 using JiraSuite.DataAccess.EntityFramework;
@@ -16,29 +19,60 @@ namespace JiraSuite.Managers
         private JiraConnection _jiraConnection = new JiraConnection();
         private JiraSuiteDbContext _dbContext;
 
-        public void UpdateDb()
+        public void UpdateDb(List<DbEntityValidationException> saveErrors)
         {
-            List<Issue> allIssues = GetAllMosoIssues();
-            allIssues.AddRange( GetAllMosoClubIssues());
+            List<Issue> allIssues = GetAllIssues();
+            //allIssues.AddRange(GetAllMosoClubIssues());
+            //FOR FASTER DEBUG ONLY GET MCLUB ISSUES!!!
+            //List<Issue> allIssues = GetAllMosoClubIssues();
             using (_dbContext = new JiraSuiteDbContext())
             {
-                foreach (var issue in allIssues)
+                foreach (var issue in allIssues.Where(x => !string.IsNullOrWhiteSpace(x.key) && ! string.IsNullOrWhiteSpace(x.fields.customfield_10080)))
                 {
-                    _dbContext.JiraIssues.Add(new JiraIssue(issue));
+                    try
+                    {
+                        bool isNew = false;
+                        var thisIssue = GetCreateJiraIssue(issue, out isNew);
+                        if (isNew)
+                            _dbContext.Entry(new JiraIssue(issue)).State = EntityState.Added;
+                        else
+                        {
+                            _dbContext.JiraIssues.AddOrUpdate(thisIssue);
+                            //_dbContext.Entry(thisIssue).State = EntityState.Modified;
+                        }
+                        _dbContext.SaveChanges();
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        saveErrors.Add(ex);
+                    }
                 }
-            _dbContext.SaveChangesAsync();
             }
         }
 
-        public List<Issue> GetAllMosoIssues()
+        public List<Issue> GetAllIssues()
         {
             List<Issue> mosoIssues = new List<Issue>();
-            foreach (string type in Enum.GetNames(typeof(JiraIssueType)))
+            foreach (string software in Enum.GetNames(typeof(SoftwareType)))
             {
-                string jql = "WRITE SOME MREANINGFUL JQL TO LIMIT SEARCH?";
-                mosoIssues.AddRange(_jiraConnection.Client.GetIssuesByQuery(Enum.GetName(typeof(SoftwareType), SoftwareType.MOSO), type, "").ToList());
+                foreach (string type in Enum.GetNames(typeof(JiraIssueType)))
+                {
+                    string jql = "cf[10080] is not empty";
+
+                    mosoIssues.AddRange(_jiraConnection.Client.GetIssuesByQuery(software, type, jql, new[] {"customfield_10080"}).ToList());
+                }
             }
             return mosoIssues;
+        }
+
+        public JiraIssue GetCreateJiraIssue(Issue issue, out bool isNew)
+        {
+            _dbContext = new JiraSuiteDbContext();
+            JiraIssue thisIssue = new JiraIssue();
+            if (_dbContext.JiraIssues.Any())
+                thisIssue = _dbContext.JiraIssues.FirstOrDefault(x => x.IssueKey == issue.key);
+            bool state = isNew = string.IsNullOrEmpty(thisIssue?.IssueKey) ? true : false;
+            return thisIssue;
         }
         private List<Issue> GetAllMosoClubIssues()
         {

@@ -54,12 +54,33 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="TechTalk.JiraRestClient, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TechTalk.JiraRestClient.2.5.0\lib\net40-Client\TechTalk.JiraRestClient.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\JiraRestClient\TechTalk.JiraRestClient\bin\Debug\TechTalk.JiraRestClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\JiraSuiteDbContext.cs" />
+    <Compile Include="Migrations\201611030053593_alter Netsuite model.cs" />
+    <Compile Include="Migrations\201611030053593_alter Netsuite model.Designer.cs">
+      <DependentUpon>201611030053593_alter Netsuite model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030117510_alter Jira primary key, add.cs" />
+    <Compile Include="Migrations\201611030117510_alter Jira primary key, add.Designer.cs">
+      <DependentUpon>201611030117510_alter Jira primary key, add.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030120410_alter Jira primary key, add auto-generate key.cs" />
+    <Compile Include="Migrations\201611030120410_alter Jira primary key, add auto-generate key.Designer.cs">
+      <DependentUpon>201611030120410_alter Jira primary key, add auto-generate key.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030150357_alter jira primary key again.cs" />
+    <Compile Include="Migrations\201611030150357_alter jira primary key again.Designer.cs">
+      <DependentUpon>201611030150357_alter jira primary key again.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030332000_Import of custom netsuite field.cs" />
+    <Compile Include="Migrations\201611030332000_Import of custom netsuite field.Designer.cs">
+      <DependentUpon>201611030332000_Import of custom netsuite field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\IssueType.cs" />
     <Compile Include="Models\JiraIssue.cs" />
     <Compile Include="Models\NetsuiteTicket.cs" />
@@ -67,11 +88,30 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201611030053593_alter Netsuite model.resx">
+      <DependentUpon>201611030053593_alter Netsuite model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030117510_alter Jira primary key, add.resx">
+      <DependentUpon>201611030117510_alter Jira primary key, add.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030120410_alter Jira primary key, add auto-generate key.resx">
+      <DependentUpon>201611030120410_alter Jira primary key, add auto-generate key.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030150357_alter jira primary key again.resx">
+      <DependentUpon>201611030150357_alter jira primary key again.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030332000_Import of custom netsuite field.resx">
+      <DependentUpon>201611030332000_Import of custom netsuite field.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

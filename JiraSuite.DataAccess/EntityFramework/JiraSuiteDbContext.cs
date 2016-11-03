@@ -11,6 +11,17 @@ namespace JiraSuite.DataAccess.EntityFramework
     public class JiraSuiteDbContext : DbContext
     {
         public DbSet<JiraIssue> JiraIssues { get; set; }
-        public DbSet<NetsuiteTicket> NetsuiteTickets { get; set; }
+        public DbSet<NetsuiteApiResult> NetsuiteTickets { get; set; }
+        public DbSet<Columns> NetsuiteColumns { get; set; }
+        public DbSet<Stage> NetsuiteStages { get; set; }
+        public DbSet<Status> NetsuiteStatuses { get; set; }
+        public DbSet<Profile> NetsuiteRProfiles { get; set; }
+        public DbSet<Category> NetsuiteCategories { get; set; }
+        public DbSet<Assigned> NetsuiteAssigndes { get; set; }
+        public DbSet<Priority> NetsuitePriorities { get; set; }
+        public DbSet<Contact> NetuiteContacts { get; set; }
+
+
+        public JiraSuiteDbContext() : base("name=JiraSuiteDbContext") {}
     }
 }
