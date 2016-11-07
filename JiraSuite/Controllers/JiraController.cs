@@ -22,7 +22,7 @@ namespace JiraSuite.Controllers
         public ActionResult JiraSuiteSync()
         {
             List<DbEntityValidationException> saveErrors = new List<DbEntityValidationException>();
-            //_netsuiteManager.UpdateDb();
+            //_netsuiteManager.UpdateDb(saveErrors);
             _jiraManager.UpdateDb(saveErrors);
             if (saveErrors.Any())
                 return Json(new {success = true}, JsonRequestBehavior.AllowGet);

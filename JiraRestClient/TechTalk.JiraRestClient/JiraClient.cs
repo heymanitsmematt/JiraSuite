@@ -121,10 +121,15 @@ namespace TechTalk.JiraRestClient
         {
             var queryCount = 50;
             var resultCount = startIndex;
+            var allFields = new string[typeof(TIssueFields).GetProperties().Length];
+            for (var i = 0; i < typeof(TIssueFields).GetProperties().Length; i++)
+                allFields[i] = typeof(TIssueFields).GetProperties()[i].Name;
+
+
             while (true)
             {
                 var path = String.Format("search?jql={0}&startAt={1}&maxResults={2}", jqlQuery, resultCount, queryCount);
-                if (fields != null) path += String.Format("&fields={0}", String.Join(",", fields));
+                if (fields != null) path += String.Format("&fields={0}", String.Join(",", allFields));
 
                 var request = CreateRequest(Method.GET, path);
 

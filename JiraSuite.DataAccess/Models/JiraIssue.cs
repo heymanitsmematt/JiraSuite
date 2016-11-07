@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.SqlTypes;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using JiraSuite.DataAccess.EntityFramework;
@@ -25,20 +26,38 @@ namespace JiraSuite.DataAccess.Models
         public string Reporter { get; set; }
         public string Assignee { get; set; }
         public string NetsuiteTicketNumber { get; set; }
+        public virtual List<NetsuiteApiResult> NetsuiteApiResults { get; set; }
         public string Status { get; set; }
         public List<string> Comments { get; set; }
         public SoftwareType SoftwareType { get; set; }
         public JiraIssueType IssueType { get; set; }
-
         public DateTime? LastRefreshTime { get; set; }
-        //{ }// return LastRefreshTime == DateTime.MinValue ? Convert.ToDateTime(SqlDateTime.MinValue) : LastRefreshTime; }
-        //set; { }
-        //}
         public virtual List<NetsuiteApiResult> NetsuiteTickets { get; set; }
+
+
+        #region Methods
+
+        public void UpdateFromExisting(Issue issue)
+        {
+            this.Status = UpdateIfDifferent<string>(Status, issue.fields.status.name).ToString();
+
+        }
+
+        private object UpdateIfDifferent<T>(object leftSide, object rightSide)
+        {
+            dynamic objOut = typeof(T).Name == "String" ? string.Empty : Activator.CreateInstance(typeof(T).ReflectedType);
+            objOut = leftSide == rightSide ? leftSide : rightSide;
+            return objOut;
+        }
+
+        #endregion
 
         #region Constructors
 
-        public JiraIssue() { }
+        public JiraIssue()
+        {
+            NetsuiteApiResults = new List<NetsuiteApiResult>();
+        }
         
         public JiraIssue(Issue issue)
         {

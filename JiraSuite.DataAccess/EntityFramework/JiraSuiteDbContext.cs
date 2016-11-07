@@ -15,11 +15,12 @@ namespace JiraSuite.DataAccess.EntityFramework
         public DbSet<Columns> NetsuiteColumns { get; set; }
         public DbSet<Stage> NetsuiteStages { get; set; }
         public DbSet<Status> NetsuiteStatuses { get; set; }
-        public DbSet<Profile> NetsuiteRProfiles { get; set; }
+        public DbSet<Profile> NetsuiteProfiles { get; set; }
         public DbSet<Category> NetsuiteCategories { get; set; }
         public DbSet<Assigned> NetsuiteAssigndes { get; set; }
         public DbSet<Priority> NetsuitePriorities { get; set; }
         public DbSet<Contact> NetuiteContacts { get; set; }
+        public DbSet<Company> NetsuiteCompanies { get; set; }
 
 
         public JiraSuiteDbContext() : base("name=JiraSuiteDbContext") {}

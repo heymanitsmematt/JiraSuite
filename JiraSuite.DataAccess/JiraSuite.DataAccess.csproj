@@ -80,6 +80,26 @@
     <Compile Include="Migrations\201611030332000_Import of custom netsuite field.Designer.cs">
       <DependentUpon>201611030332000_Import of custom netsuite field.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611030354283_Netsuite model restructure.cs" />
+    <Compile Include="Migrations\201611030354283_Netsuite model restructure.Designer.cs">
+      <DependentUpon>201611030354283_Netsuite model restructure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030419386_Company key fix.cs" />
+    <Compile Include="Migrations\201611030419386_Company key fix.Designer.cs">
+      <DependentUpon>201611030419386_Company key fix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030431147_add missing netsuite property tables.cs" />
+    <Compile Include="Migrations\201611030431147_add missing netsuite property tables.Designer.cs">
+      <DependentUpon>201611030431147_add missing netsuite property tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611031225564_Add many-to-many relationship.cs" />
+    <Compile Include="Migrations\201611031225564_Add many-to-many relationship.Designer.cs">
+      <DependentUpon>201611031225564_Add many-to-many relationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs" />
+    <Compile Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.Designer.cs">
+      <DependentUpon>201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\IssueType.cs" />
     <Compile Include="Models\JiraIssue.cs" />
@@ -112,6 +132,25 @@
     <EmbeddedResource Include="Migrations\201611030332000_Import of custom netsuite field.resx">
       <DependentUpon>201611030332000_Import of custom netsuite field.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030354283_Netsuite model restructure.resx">
+      <DependentUpon>201611030354283_Netsuite model restructure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030419386_Company key fix.resx">
+      <DependentUpon>201611030419386_Company key fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030431147_add missing netsuite property tables.resx">
+      <DependentUpon>201611030431147_add missing netsuite property tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611031225564_Add many-to-many relationship.resx">
+      <DependentUpon>201611031225564_Add many-to-many relationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.resx">
+      <DependentUpon>201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\201611031223457_Add many-to-many relationship b\" />
+    <Folder Include="Migrations\201611031224454_Add many-to-many relationship b\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

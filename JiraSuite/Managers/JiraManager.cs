@@ -33,6 +33,15 @@ namespace JiraSuite.Managers
                     {
                         bool isNew = false;
                         var thisIssue = GetCreateJiraIssue(issue, out isNew);
+
+                        for (var i = 0; i < thisIssue.NetsuiteTicketNumber?.Split(',').Length; i++)
+                        {
+                            var thisNumber = thisIssue.NetsuiteTicketNumber.Split(',')[i];
+                            if (_dbContext.NetsuiteTickets.Find(thisNumber) != null)
+                                thisIssue.NetsuiteTickets.Add(_dbContext.NetsuiteTickets.Find(thisNumber));
+                        }
+
+
                         if (isNew)
                             _dbContext.Entry(new JiraIssue(issue)).State = EntityState.Added;
                         else
@@ -70,7 +79,11 @@ namespace JiraSuite.Managers
             _dbContext = new JiraSuiteDbContext();
             JiraIssue thisIssue = new JiraIssue();
             if (_dbContext.JiraIssues.Any())
+            {
                 thisIssue = _dbContext.JiraIssues.FirstOrDefault(x => x.IssueKey == issue.key);
+                thisIssue.UpdateFromExisting(issue);
+            }
+
             bool state = isNew = string.IsNullOrEmpty(thisIssue?.IssueKey) ? true : false;
             return thisIssue;
         }

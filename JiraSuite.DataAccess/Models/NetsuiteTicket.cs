@@ -1,62 +1,110 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.InteropServices;
 
 namespace JiraSuite.DataAccess.Models
 {
     public class Company
     {
+        private string _name;
         [Key]
-        public int id { get; set; }
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Stage
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Status
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Profile
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Category
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Assigned
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Priority
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
     public class Contact
     {
+        private string _name;
         [Key]
-        public string name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string name
+        {
+            get { return _name ?? ""; }
+            set { _name = value ?? ""; }
+        }
         public string internalid { get; set; }
     }
 
@@ -65,6 +113,7 @@ namespace JiraSuite.DataAccess.Models
         private List<JiraIssue> _jiraIusIssues = new List<JiraIssue>();
 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string casenumber { get; set; }
         public string title { get; set; }
         public virtual Company company { get; set; }
@@ -87,7 +136,7 @@ namespace JiraSuite.DataAccess.Models
     public class NetsuiteApiResult
     {
         [Key]
-        public int InternalID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string id { get; set; }
         public string recordtype { get; set; }
         public virtual Columns columns { get; set; }

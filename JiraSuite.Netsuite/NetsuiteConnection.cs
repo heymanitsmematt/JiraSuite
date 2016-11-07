@@ -1,6 +1,7 @@
 ﻿using JiraSuite.DataAccess.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
+using JiraSuite.DataAccess.EntityFramework;
 using Newtonsoft.Json;
 
 namespace JiraSuite.Netsuite
@@ -20,6 +22,7 @@ namespace JiraSuite.Netsuite
         private readonly string _netsuiteUrlTrackedNoUpdate = "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=32&deploy=1";
         private readonly string _netsuiteUrlFixUpdate = "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=36&deploy=1";
         private JavaScriptSerializer _serializer = new JavaScriptSerializer();
+        private JiraSuiteDbContext _dbContext = new JiraSuiteDbContext();
 
 
         private void AddRequestHeaders(WebRequest request)
@@ -28,7 +31,7 @@ namespace JiraSuite.Netsuite
             request.ContentType = "application/json";
         }
 
-        public List<NetsuiteApiResult> GetAllTickets()
+        public List<NetsuiteApiResult> GetAllTickets(JiraSuiteDbContext dbContext)
         {
             List<NetsuiteApiResult> allTickets = new List<NetsuiteApiResult>();
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_netsuiteUrlTrackedUpdate);
@@ -36,14 +39,14 @@ namespace JiraSuite.Netsuite
             using (var stream = new StreamReader(request.GetResponse().GetResponseStream()))
             {
                 var responseObj = stream.ReadToEnd();
-                allTickets.AddRange(DeserializeResult(responseObj));
+                allTickets.AddRange(DeserializeResult(responseObj, dbContext));
             }
             return allTickets;
         }
 
 
 
-        private List<NetsuiteApiResult> DeserializeResult(string responseString)
+        private List<NetsuiteApiResult> DeserializeResult(string responseString, JiraSuiteDbContext dbContext)
         {
             List<NetsuiteApiResult> parsedList = new List<NetsuiteApiResult>();
             string[] responseArray = responseString.Split('}');
@@ -79,10 +82,16 @@ namespace JiraSuite.Netsuite
                                 i += 3;
                                 break;
                             case "company":
-                                thisResult.columns.company = new Company()
+                                if (dbContext.NetsuiteCompanies.Find(thisarraySet[i + 4].Replace("\"", "")) != null)
+                                    thisResult.columns.company =
+                                        dbContext.NetsuiteCompanies.Find(thisarraySet[i + 4].Replace("\"", ""));
+                                else
                                 {
-                                    name = thisarraySet[i + 4].Replace("\"", "")
-                                };
+                                    thisResult.columns.company = dbContext.NetsuiteCompanies.Create();
+                                    thisResult.columns.company.name = thisarraySet[i + 4].Replace("\"", "");
+                                    dbContext.Entry(thisResult.columns.company).State = EntityState.Added; ;
+                                    dbContext.SaveChanges();
+                                }
                                 i += 3;
                                 break;
                         }
@@ -104,23 +113,78 @@ namespace JiraSuite.Netsuite
                                 thisResult.columns.casenumber = columnValue;
                                 break;
                             case "contact":
-                                thisResult.columns.contact = new Contact() {name = columnValue};
+                                if (dbContext.NetuiteContacts.Find(columnValue) != null)
+                                    thisResult.columns.contact = dbContext.NetuiteContacts.Find(columnValue);
+                                else
+                                {
+                                    thisResult.columns.contact = dbContext.NetuiteContacts.Create();
+                                    thisResult.columns.contact.name = columnValue;
+                                    dbContext.Entry(thisResult.columns.contact).State = EntityState.Added; ;
+                                    dbContext.SaveChanges();
+                                }
                                 break;
                             case "stage":
-                                thisResult.columns.stage = new Stage() {name = columnValue};
+                                if (dbContext.NetsuiteStages.Find(columnValue) != null)
+                                    thisResult.columns.stage = dbContext.NetsuiteStages.Find(columnValue);
+                                else
+                                {
+                                    thisResult.columns.stage = dbContext.NetsuiteStages.Create();
+                                    thisResult.columns.stage.name = columnValue;
+                                    dbContext.Entry(thisResult.columns.stage).State = EntityState.Added; ;
+                                    dbContext.SaveChanges();
+                                }
                                 break;
                             case "status":
-                                thisResult.columns.status = new Status() {name = columnValue};
+                                if (dbContext.NetsuiteStatuses.Find(columnValue) != null)
+                                    thisResult.columns.status = dbContext.NetsuiteStatuses.Find(columnValue);
+                                else
+                                {
+                                    thisResult.columns.status = dbContext.NetsuiteStatuses.Create();
+                                    thisResult.columns.status.name = columnValue;
+                                    dbContext.Entry(thisResult.columns.status).State = EntityState.Added; ;
+                                    dbContext.SaveChanges();
+                                }
+
                                 break;
                             case "startdate":
                                 thisResult.columns.startdate =
                                     responseArray[i + (loopCounter*10)].Split('\\')[3].Replace("\"", "");
+                                if (
+                                    dbContext.NetsuiteCategories.Find(
+                                        responseArray[i + (loopCounter*10)].Split('\\')[13].Replace("\"", "")) != null)
+                                    thisResult.columns.category =
+                                        dbContext.NetsuiteCategories.Find(
+                                            responseArray[i + (loopCounter*10)].Split('\\')[13].Replace("\"", ""));
+                                else
+                                {
+                                    thisResult.columns.category = dbContext.NetsuiteCategories.Create();
+                                    thisResult.columns.category.name =
+                                        responseArray[i + (loopCounter*10)].Split('\\')[13].Replace("\"", "");
+                                    dbContext.Entry(thisResult.columns.category).State = EntityState.Added;;
+                                    dbContext.SaveChanges();
+                                }
                                 break;
                             case "assigned":
-                                thisResult.columns.assigned = new Assigned() {name = columnValue};
+                                if (dbContext.NetsuiteAssigndes.Find(columnValue) != null)
+                                    thisResult.columns.assigned = dbContext.NetsuiteAssigndes.Find(columnValue);
+                                else
+                                {
+                                    thisResult.columns.assigned = dbContext.NetsuiteAssigndes.Create();
+                                    thisResult.columns.assigned.name = columnValue;
+                                    dbContext.Entry(thisResult.columns.assigned).State = EntityState.Added; ;
+                                    dbContext.SaveChanges();
+                                }
                                 break;
                             case "priority":
-                                thisResult.columns.priority = new Priority() {name = columnValue};
+                                if (dbContext.NetsuitePriorities.Find(columnValue) != null)
+                                    thisResult.columns.priority = dbContext.NetsuitePriorities.Find(columnValue);
+                                else
+                                {
+                                    thisResult.columns.priority = dbContext.NetsuitePriorities.Create();
+                                    thisResult.columns.priority.name = columnValue;
+                                    dbContext.Entry(thisResult.columns.priority).State = EntityState.Added; ;
+                                    dbContext.SaveChanges();
+                                }
                                 break;
                             case "helpdesk":
                                 //ASSIGN CUSTOM FIELDS HERE!!!
@@ -131,10 +195,14 @@ namespace JiraSuite.Netsuite
                                     switch (refinedFields.ToArray()[j])
                                     {
                                         case "custeventsn_case_number":
-                                            thisResult.columns.JiraIssues.Add(new JiraIssue()
-                                            {
-                                                IssueKey = refinedFields.ToArray()[j + 2]
-                                            });
+                                            columnValue = refinedFields.ToArray()[j + 2];
+                                            foreach (var ticket in columnValue.Split(','))
+                                                thisResult.columns.JiraIssues.Add(
+                                                    dbContext.JiraIssues.Find(ticket) ?? 
+                                                    new JiraIssue()
+                                                {
+                                                    IssueKey = ticket
+                                                });
                                             break;
                                         case "custeventescalatedto":
                                             thisResult.columns.escalatedto = refinedFields.ToArray()[j + 2];
@@ -144,7 +212,7 @@ namespace JiraSuite.Netsuite
                                 break;
                         }
                     }
-
+                    FillEmptyReferences(thisResult);
                     parsedList.Add(thisResult);
                     loopCounter++;
                 }
@@ -156,6 +224,21 @@ namespace JiraSuite.Netsuite
             }
             return parsedList;
         }
-        
+
+        public void FillEmptyReferences(NetsuiteApiResult thisResult)
+        {
+            var properties = typeof(Columns).GetProperties();
+            foreach (var prop in properties)
+            {
+                try
+                {
+                    if (prop.GetValue(thisResult.columns) == null)
+                        prop.SetValue(thisResult.columns, Activator.CreateInstance(prop.PropertyType));
+                }
+                catch { }
+            }
+        }
+
+
     }
 }
