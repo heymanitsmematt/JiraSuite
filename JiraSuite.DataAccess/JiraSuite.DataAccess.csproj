@@ -47,6 +47,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -100,11 +101,37 @@
     <Compile Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.Designer.cs">
       <DependentUpon>201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611071958560_I think i changed some things in the model.cs" />
+    <Compile Include="Migrations\201611071958560_I think i changed some things in the model.Designer.cs">
+      <DependentUpon>201611071958560_I think i changed some things in the model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611080202486_added pulling fixVersion from Jira and data model.cs" />
+    <Compile Include="Migrations\201611080202486_added pulling fixVersion from Jira and data model.Designer.cs">
+      <DependentUpon>201611080202486_added pulling fixVersion from Jira and data model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611080229144_Created entirely new EF model for FixVersion.cs" />
+    <Compile Include="Migrations\201611080229144_Created entirely new EF model for FixVersion.Designer.cs">
+      <DependentUpon>201611080229144_Created entirely new EF model for FixVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.cs" />
+    <Compile Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.Designer.cs">
+      <DependentUpon>201611080306596_Created entirely new EF model for FixVersionsdaad.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Assigned.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Columns.cs" />
+    <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\FixVersion.cs" />
     <Compile Include="Models\IssueType.cs" />
     <Compile Include="Models\JiraIssue.cs" />
-    <Compile Include="Models\NetsuiteTicket.cs" />
-    <Compile Include="Models\SoftwareTypeHelper.cs" />
+    <Compile Include="Models\NetsuiteApiResult.cs" />
+    <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\Priority.cs" />
+    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\JiraTypeHelper.cs" />
+    <Compile Include="Models\Stage.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +173,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.resx">
       <DependentUpon>201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611071958560_I think i changed some things in the model.resx">
+      <DependentUpon>201611071958560_I think i changed some things in the model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611080202486_added pulling fixVersion from Jira and data model.resx">
+      <DependentUpon>201611080202486_added pulling fixVersion from Jira and data model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611080229144_Created entirely new EF model for FixVersion.resx">
+      <DependentUpon>201611080229144_Created entirely new EF model for FixVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.resx">
+      <DependentUpon>201611080306596_Created entirely new EF model for FixVersionsdaad.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

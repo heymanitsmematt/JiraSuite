@@ -13,6 +13,7 @@ namespace JiraSuite.Controllers
     {
         private JiraManager _jiraManager = new JiraManager();
         private NetsuiteManager _netsuiteManager = new NetsuiteManager();
+        private UpdateManager _syncManager = new UpdateManager();
         // GET: Jira
         public ActionResult Index()
         {
@@ -22,13 +23,14 @@ namespace JiraSuite.Controllers
         public ActionResult JiraSuiteSync()
         {
             List<DbEntityValidationException> saveErrors = new List<DbEntityValidationException>();
-            //_netsuiteManager.UpdateDb(saveErrors);
+            _netsuiteManager.UpdateDb(saveErrors);
             _jiraManager.UpdateDb(saveErrors);
+            _jiraManager.GetJiraTicketsWithMissingInfoFromNetsuite();
+            _syncManager.PostNetsuiteUpdates();
             if (saveErrors.Any())
                 return Json(new {success = true}, JsonRequestBehavior.AllowGet);
-            else
-                return Json(new {success = false, saveErrors = saveErrors.Select(x => x.Message).ToString()},
-                    JsonRequestBehavior.AllowGet);
+            return Json(new {success = false, saveErrors = saveErrors.Select(x => x.Message).ToString()},
+                JsonRequestBehavior.AllowGet);
         }
     }
 }

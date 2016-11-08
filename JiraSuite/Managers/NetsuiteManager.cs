@@ -15,7 +15,7 @@ namespace JiraSuite.Managers
     public class NetsuiteManager
     {
         private NetsuiteConnection _netsuiteConnection = new NetsuiteConnection();
-        private JiraSuiteDbContext _dbContext = new JiraSuiteDbContext();
+        private JiraSuiteDbContext _dbContext = DBContextManager.Instance.DbContext;
 
         public List<NetsuiteApiResult> GetAllNetsuiteTickets()
         {

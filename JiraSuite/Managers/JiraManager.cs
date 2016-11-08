@@ -17,15 +17,12 @@ namespace JiraSuite.Managers
     public class JiraManager
     {
         private JiraConnection _jiraConnection = new JiraConnection();
-        private JiraSuiteDbContext _dbContext;
+        private JiraSuiteDbContext _dbContext = DBContextManager.Instance.DbContext;
 
         public void UpdateDb(List<DbEntityValidationException> saveErrors)
         {
             List<Issue> allIssues = GetAllIssues();
-            //allIssues.AddRange(GetAllMosoClubIssues());
-            //FOR FASTER DEBUG ONLY GET MCLUB ISSUES!!!
-            //List<Issue> allIssues = GetAllMosoClubIssues();
-            using (_dbContext = new JiraSuiteDbContext())
+            using (_dbContext)
             {
                 foreach (var issue in allIssues.Where(x => !string.IsNullOrWhiteSpace(x.key) && ! string.IsNullOrWhiteSpace(x.fields.customfield_10080)))
                 {
@@ -51,11 +48,30 @@ namespace JiraSuite.Managers
                         }
                         _dbContext.SaveChanges();
                     }
-                    catch (DbEntityValidationException ex)
+                    catch (Exception ex)
                     {
-                        saveErrors.Add(ex);
+                        DbEntityValidationException item = ex as DbEntityValidationException;
+                        if (item != null)
+                            saveErrors.Add(item);
                     }
                 }
+            }
+        }
+
+        public void GetJiraTicketsWithMissingInfoFromNetsuite()
+        {
+            using (_dbContext = DBContextManager.Instance.DbContext)
+            {
+                var jiraIssues =_dbContext.JiraIssues.Where(x => x.IssueId == null).ToList();
+                foreach (var issue in jiraIssues)
+                {
+                    Issue newJiraIssue = _jiraConnection.Client.LoadIssue(issue.IssueKey);
+                        // .GetIssuesByQuery(issue.IssueKey.Substring(0, issue.IssueKey.IndexOf('-')), $"key = {issue.IssueKey}").FirstOrDefault();
+                    issue.UpdateFromExisting(newJiraIssue);
+                    _dbContext.Entry(issue).State = EntityState.Modified;
+                    _dbContext.SaveChanges();
+                }
+
             }
         }
 
@@ -68,7 +84,8 @@ namespace JiraSuite.Managers
                 {
                     string jql = "cf[10080] is not empty";
 
-                    mosoIssues.AddRange(_jiraConnection.Client.GetIssuesByQuery(software, type, jql, new[] {"customfield_10080"}).ToList());
+
+                    mosoIssues.AddRange(_jiraConnection.Client.GetIssuesByQuery(software, type, jql, new[] {"customfield_10080", "fixVersions"}).ToList()); //"MCLUB", type, jql, new[] { "customfield_10080", "fixVersions" }).ToList());
                 }
             }
             return mosoIssues;
@@ -76,11 +93,11 @@ namespace JiraSuite.Managers
 
         public JiraIssue GetCreateJiraIssue(Issue issue, out bool isNew)
         {
-            _dbContext = new JiraSuiteDbContext();
+            _dbContext = DBContextManager.Instance.DbContext;
             JiraIssue thisIssue = new JiraIssue();
             if (_dbContext.JiraIssues.Any())
             {
-                thisIssue = _dbContext.JiraIssues.FirstOrDefault(x => x.IssueKey == issue.key);
+                thisIssue = _dbContext.JiraIssues.FirstOrDefault(x => (x.IssueKey != null) && (issue.key != null) && (x.IssueKey == issue.key));
                 thisIssue.UpdateFromExisting(issue);
             }
 

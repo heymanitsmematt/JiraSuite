@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,11 +12,14 @@ using System.Threading.Tasks;
 using JiraSuite.DataAccess.EntityFramework;
 using TechTalk.JiraRestClient;
 using static JiraSuite.DataAccess.Models.JiraTypeHelper;
+using System.Web.Script.Serialization;
 
 namespace JiraSuite.DataAccess.Models
 {
     public class JiraIssue
     {
+        private readonly JiraSuiteDbContext _dbContext = DBContextManager.Instance.DbContext;
+        private JavaScriptSerializer _serializer = new JavaScriptSerializer();
         
         public string IssueId { get; set; }
         [Key]
@@ -22,13 +27,14 @@ namespace JiraSuite.DataAccess.Models
         public string IssueKey { get; set; }
         public string Description { get; set; }
         public string Summary { get; set; }
+        public FixVersion[] FixVersion { get; set; }
         public List<JiraIssue> IssueLinks { get; set; }
         public string Reporter { get; set; }
         public string Assignee { get; set; }
         public string NetsuiteTicketNumber { get; set; }
         public virtual List<NetsuiteApiResult> NetsuiteApiResults { get; set; }
         public string Status { get; set; }
-        public List<string> Comments { get; set; }
+        public virtual List<string> Comments { get; set; }
         public SoftwareType SoftwareType { get; set; }
         public JiraIssueType IssueType { get; set; }
         public DateTime? LastRefreshTime { get; set; }
@@ -39,7 +45,78 @@ namespace JiraSuite.DataAccess.Models
 
         public void UpdateFromExisting(Issue issue)
         {
-            this.Status = UpdateIfDifferent<string>(Status, issue.fields.status.name).ToString();
+            this.Status = UpdateIfDifferent<string>(Status, issue.fields.status.name)?.ToString();
+            this.Summary = UpdateIfDifferent<string>(Summary, issue.fields.summary)?.ToString();
+            this.Reporter = UpdateIfDifferent<string>(Reporter, issue.fields.reporter.displayName)?.ToString();
+            this.Assignee = UpdateIfDifferent<string>(Assignee, issue.fields.assignee?.displayName)?.ToString();
+            this.NetsuiteTicketNumber = UpdateIfDifferent<string>(NetsuiteTicketNumber, issue.fields?.customfield_10080)?.ToString();
+            this.IssueId = UpdateIfDifferent<string>(IssueId, issue.id).ToString();
+            this.LastRefreshTime = DateTime.Now;
+            this.NetsuiteTicketNumber = issue.fields.customfield_10080;
+            try
+            {
+                var newFixVersion = _serializer.Deserialize<FixVersion[]>(issue.fields.fixVersions);
+                var contextualFixVersions = new List<FixVersion>();
+                FixVersion[] versionsToAdd = new FixVersion[0];
+                if (newFixVersion.Length > 0)
+                {
+                    foreach (FixVersion fixVersion in newFixVersion)
+                    {
+                        if (!_dbContext.FixVersions.Contains(fixVersion) && !FixVersion.Contains(fixVersion))
+                        {
+                            _dbContext.Entry(fixVersion).State = EntityState.Added;
+                            contextualFixVersions.Add(fixVersion);
+                        }
+                        else
+                        {
+                            contextualFixVersions.Add(_dbContext.FixVersions.FirstOrDefault(x => x.name == fixVersion.name));
+                        }
+
+                    }
+                    Array.Resize<FixVersion>(ref versionsToAdd, contextualFixVersions.Count + FixVersion.Length);
+                    Array.Copy(contextualFixVersions.ToArray(), 0, versionsToAdd, versionsToAdd.Length, contextualFixVersions.Count);
+                    FixVersion = versionsToAdd;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                this.FixVersion = new FixVersion[0]; //= _dbContext.FixVersions.Create();
+            }
+            
+            //manage linked netsuite tickets
+            //List<NetsuiteApiResult> nsTickets = new List<NetsuiteApiResult>();
+            //foreach (var ticket in issue.fields.customfield_10080.Split(',').ToList())
+            //{
+            //    if (NetsuiteApiResults.All(x => x.columns.casenumber != ticket))
+            //    {
+            //        if (!_dbContext.NetsuiteTickets.Any(x => x.columns.casenumber == ticket))
+            //        {
+            //            NetsuiteApiResult newNsApiResult = new NetsuiteApiResult();
+            //            newNsApiResult.columns = new Columns();
+            //            newNsApiResult.columns.casenumber = ticket;
+            //            newNsApiResult.columns.JiraIssues.Add(this);
+            //            newNsApiResult.id = new Random().Next(1, 99999).ToString();
+            //            _dbContext.Entry(ticket).State = EntityState.Added;
+            //            nsTickets.Add(newNsApiResult);
+            //        }
+            //        else
+            //        {
+            //            NetsuiteApiResult existingApiResult = _dbContext.NetsuiteTickets.FirstOrDefault(x => x.columns.casenumber == ticket);
+            //            nsTickets.Add(existingApiResult);
+            //        }
+            //    }
+            //}
+            //NetsuiteApiResults.AddRange(nsTickets);
+
+
+            //manage new comments
+            List<String> commentsToAdd = new List<string>();
+            foreach(var comment in issue.fields.comments)
+                if (Comments.All(x => comment.body.ToString() != x))
+                    commentsToAdd.Add(comment.body);
+            Comments.AddRange(commentsToAdd);
 
         }
 
@@ -57,6 +134,7 @@ namespace JiraSuite.DataAccess.Models
         public JiraIssue()
         {
             NetsuiteApiResults = new List<NetsuiteApiResult>();
+            Comments = new List<string>();
         }
         
         public JiraIssue(Issue issue)
@@ -71,7 +149,7 @@ namespace JiraSuite.DataAccess.Models
             foreach (var prop in typeof(IssueFields).GetProperties())
             {
                 IEnumerable<string> thisProperty = from property in typeof(JiraIssue).GetProperties()
-                                                   where property.Name.ToLower() == prop.Name.ToLower()
+                                                   where String.Equals(property.Name, prop.Name, StringComparison.CurrentCultureIgnoreCase)
                                                    select property.Name;
                 if (thisProperty.Any())
                 {
@@ -98,6 +176,14 @@ namespace JiraSuite.DataAccess.Models
                                     break;
                                 case "issuelinks":
                                     issue.fields.issuelinks.ForEach(i => this.IssueLinks.Add(new JiraIssue() { IssueId = i.id }));
+                                    break;
+                                case "fixVersions":
+                                    this.FixVersion =
+                                        _serializer.Deserialize<FixVersion[]>(issue.fields.fixVersions);
+                                    break;
+                                case "cucustomfield_10080":
+                                    foreach(var ticket in issue.fields.customfield_10080.Split(','))
+                                        Console.WriteLine(ticket);
                                     break;
                             }
 

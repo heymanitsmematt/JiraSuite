@@ -31,5 +31,6 @@ namespace TechTalk.JiraRestClient
         public List<IssueLink> issuelinks { get; set; }
         public List<Attachment> attachment { get; set; }
         public String customfield_10080 { get; set; }
+        public string fixVersions { get; set; }
     }
 }

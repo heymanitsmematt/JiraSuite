@@ -10,8 +10,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using JiraSuite.DataAccess.EntityFramework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
 namespace JiraSuite.Netsuite
@@ -21,8 +23,9 @@ namespace JiraSuite.Netsuite
         private readonly string _netsuiteUrlTrackedUpdate = "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=35&deploy=1";
         private readonly string _netsuiteUrlTrackedNoUpdate = "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=32&deploy=1";
         private readonly string _netsuiteUrlFixUpdate = "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=36&deploy=1";
+        private readonly string _netsuiteUrlGetTicketByNumber = "https://rest.na2.netsuite.com/app/site/hosting/restlet.nl?script=37&deploy=1";
         private JavaScriptSerializer _serializer = new JavaScriptSerializer();
-        private JiraSuiteDbContext _dbContext = new JiraSuiteDbContext();
+        private JiraSuiteDbContext _dbContext = DBContextManager.Instance.DbContext;
 
 
         private void AddRequestHeaders(WebRequest request)
@@ -30,6 +33,72 @@ namespace JiraSuite.Netsuite
             request.Headers.Add(HttpRequestHeader.Authorization, "NLAuth nlauth_account=926273, nlauth_email=mwillis@motionsoft.net, nlauth_signature=@Power88cake, nlauth_role=3");
             request.ContentType = "application/json";
         }
+
+
+        public void UpdateTicketWithoutLocalNsTicket(string ticket, JiraIssue issue)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_netsuiteUrlGetTicketByNumber);
+            AddRequestHeaders(request);
+            request.Method = WebRequestMethods.Http.Post;
+            using (var writer = new StreamWriter(request.GetRequestStream()))
+            {
+                var ser = new JavaScriptSerializer();
+                var payload = ser.Serialize(new
+                {
+                    caseNumber = ticket
+                });
+                writer.Write(payload);
+                writer.Flush();
+                writer.Close();
+            }
+            try
+            {
+                var response = (HttpWebResponse)request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    var result = reader.ReadToEnd();
+                    Assert.IsTrue(Convert.ToBoolean(result));
+                    NetsuiteApiResult newResult = DeserializeResult(result, _dbContext).FirstOrDefault();
+                    UpdateExistingTicketWithJiraStatus(newResult, issue);
+                }
+            }
+            catch (Exception ex) { }
+        }
+
+        public void UpdateExistingTicketWithJiraStatus(NetsuiteApiResult nsTicket, JiraIssue jIssue)
+        {
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(_netsuiteUrlTrackedUpdate);
+            AddRequestHeaders(request);
+            request.Method = WebRequestMethods.Http.Post;
+            using (var writer = new StreamWriter(request.GetRequestStream()))
+            {
+                var ser = new JavaScriptSerializer();
+                var payload = ser.Serialize(new
+                {
+                    id = nsTicket.id,
+                    jiraStatus = jIssue.Status,
+                    fixVersion = (jIssue.FixVersion != null && jIssue.FixVersion.Length > 0 ? string.Join(",", (object) jIssue.FixVersion) : ""),
+                    priority = "",
+                    components = "",
+                    type = jIssue.IssueType
+                });
+                writer.Write(payload);
+                writer.Flush();
+                writer.Close();
+            }
+            try
+            {
+                var response = (HttpWebResponse)request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    var result = reader.ReadToEnd();
+                    Assert.IsTrue(Convert.ToBoolean(result));
+                }
+            }
+            catch (Exception ex) { }
+        }
+
+
 
         public List<NetsuiteApiResult> GetAllTickets(JiraSuiteDbContext dbContext)
         {
