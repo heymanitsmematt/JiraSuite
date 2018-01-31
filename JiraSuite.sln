@@ -13,6 +13,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.DataAccess", "Jir
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraSuite.Netsuite", "JiraSuite.Netsuite\JiraSuite.Netsuite.csproj", "{F1296EA0-7B0D-442B-890F-BBF7CA38288B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DD1DD4D1-C257-456A-8690-F3A735D74AC1}"
+	ProjectSection(SolutionItems) = preProject
+		JiraRestClient\.nuget\NuGet.Config = JiraRestClient\.nuget\NuGet.Config
+		JiraRestClient\.nuget\NuGet.exe = JiraRestClient\.nuget\NuGet.exe
+		JiraRestClient\.nuget\NuGet.targets = JiraRestClient\.nuget\NuGet.targets
+		JiraRestClient\TechTalk.JiraRestClient.nuspec = JiraRestClient\TechTalk.JiraRestClient.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

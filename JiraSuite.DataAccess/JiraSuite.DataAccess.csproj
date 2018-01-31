@@ -47,6 +47,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,24 +55,169 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="TechTalk.JiraRestClient, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TechTalk.JiraRestClient.2.5.0\lib\net40-Client\TechTalk.JiraRestClient.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\JiraRestClient\TechTalk.JiraRestClient\bin\Debug\TechTalk.JiraRestClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\JiraSuiteDbContext.cs" />
+    <Compile Include="Migrations\201611030053593_alter Netsuite model.cs" />
+    <Compile Include="Migrations\201611030053593_alter Netsuite model.Designer.cs">
+      <DependentUpon>201611030053593_alter Netsuite model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030117510_alter Jira primary key, add.cs" />
+    <Compile Include="Migrations\201611030117510_alter Jira primary key, add.Designer.cs">
+      <DependentUpon>201611030117510_alter Jira primary key, add.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030120410_alter Jira primary key, add auto-generate key.cs" />
+    <Compile Include="Migrations\201611030120410_alter Jira primary key, add auto-generate key.Designer.cs">
+      <DependentUpon>201611030120410_alter Jira primary key, add auto-generate key.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030150357_alter jira primary key again.cs" />
+    <Compile Include="Migrations\201611030150357_alter jira primary key again.Designer.cs">
+      <DependentUpon>201611030150357_alter jira primary key again.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030332000_Import of custom netsuite field.cs" />
+    <Compile Include="Migrations\201611030332000_Import of custom netsuite field.Designer.cs">
+      <DependentUpon>201611030332000_Import of custom netsuite field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030354283_Netsuite model restructure.cs" />
+    <Compile Include="Migrations\201611030354283_Netsuite model restructure.Designer.cs">
+      <DependentUpon>201611030354283_Netsuite model restructure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030419386_Company key fix.cs" />
+    <Compile Include="Migrations\201611030419386_Company key fix.Designer.cs">
+      <DependentUpon>201611030419386_Company key fix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611030431147_add missing netsuite property tables.cs" />
+    <Compile Include="Migrations\201611030431147_add missing netsuite property tables.Designer.cs">
+      <DependentUpon>201611030431147_add missing netsuite property tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611031225564_Add many-to-many relationship.cs" />
+    <Compile Include="Migrations\201611031225564_Add many-to-many relationship.Designer.cs">
+      <DependentUpon>201611031225564_Add many-to-many relationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs" />
+    <Compile Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.Designer.cs">
+      <DependentUpon>201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611071958560_I think i changed some things in the model.cs" />
+    <Compile Include="Migrations\201611071958560_I think i changed some things in the model.Designer.cs">
+      <DependentUpon>201611071958560_I think i changed some things in the model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611080202486_added pulling fixVersion from Jira and data model.cs" />
+    <Compile Include="Migrations\201611080202486_added pulling fixVersion from Jira and data model.Designer.cs">
+      <DependentUpon>201611080202486_added pulling fixVersion from Jira and data model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611080229144_Created entirely new EF model for FixVersion.cs" />
+    <Compile Include="Migrations\201611080229144_Created entirely new EF model for FixVersion.Designer.cs">
+      <DependentUpon>201611080229144_Created entirely new EF model for FixVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.cs" />
+    <Compile Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.Designer.cs">
+      <DependentUpon>201611080306596_Created entirely new EF model for FixVersionsdaad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611102207384_Tweak of FixVersions naming and logic.cs" />
+    <Compile Include="Migrations\201611102207384_Tweak of FixVersions naming and logic.Designer.cs">
+      <DependentUpon>201611102207384_Tweak of FixVersions naming and logic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611102211302_Tweak of FixVersions naming and logic2.cs" />
+    <Compile Include="Migrations\201611102211302_Tweak of FixVersions naming and logic2.Designer.cs">
+      <DependentUpon>201611102211302_Tweak of FixVersions naming and logic2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611112157515_apparently there%27s a change pending.cs" />
+    <Compile Include="Migrations\201611112157515_apparently there%27s a change pending.Designer.cs">
+      <DependentUpon>201611112157515_apparently there%27s a change pending.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611112201428_changing primary key of fixversion.cs" />
+    <Compile Include="Migrations\201611112201428_changing primary key of fixversion.Designer.cs">
+      <DependentUpon>201611112201428_changing primary key of fixversion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Assigned.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Columns.cs" />
+    <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\FixVersion.cs" />
     <Compile Include="Models\IssueType.cs" />
     <Compile Include="Models\JiraIssue.cs" />
-    <Compile Include="Models\NetsuiteTicket.cs" />
-    <Compile Include="Models\SoftwareTypeHelper.cs" />
+    <Compile Include="Models\NetsuiteApiResult.cs" />
+    <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\Priority.cs" />
+    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\JiraTypeHelper.cs" />
+    <Compile Include="Models\Stage.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201611030053593_alter Netsuite model.resx">
+      <DependentUpon>201611030053593_alter Netsuite model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030117510_alter Jira primary key, add.resx">
+      <DependentUpon>201611030117510_alter Jira primary key, add.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030120410_alter Jira primary key, add auto-generate key.resx">
+      <DependentUpon>201611030120410_alter Jira primary key, add auto-generate key.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030150357_alter jira primary key again.resx">
+      <DependentUpon>201611030150357_alter jira primary key again.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030332000_Import of custom netsuite field.resx">
+      <DependentUpon>201611030332000_Import of custom netsuite field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030354283_Netsuite model restructure.resx">
+      <DependentUpon>201611030354283_Netsuite model restructure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030419386_Company key fix.resx">
+      <DependentUpon>201611030419386_Company key fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611030431147_add missing netsuite property tables.resx">
+      <DependentUpon>201611030431147_add missing netsuite property tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611031225564_Add many-to-many relationship.resx">
+      <DependentUpon>201611031225564_Add many-to-many relationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611042045424_Create empty string paramater to avoid null exceptions for ns objs.resx">
+      <DependentUpon>201611042045424_Create empty string paramater to avoid null exceptions for ns objs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611071958560_I think i changed some things in the model.resx">
+      <DependentUpon>201611071958560_I think i changed some things in the model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611080202486_added pulling fixVersion from Jira and data model.resx">
+      <DependentUpon>201611080202486_added pulling fixVersion from Jira and data model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611080229144_Created entirely new EF model for FixVersion.resx">
+      <DependentUpon>201611080229144_Created entirely new EF model for FixVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.resx">
+      <DependentUpon>201611080306596_Created entirely new EF model for FixVersionsdaad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611102207384_Tweak of FixVersions naming and logic.resx">
+      <DependentUpon>201611102207384_Tweak of FixVersions naming and logic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611102211302_Tweak of FixVersions naming and logic2.resx">
+      <DependentUpon>201611102211302_Tweak of FixVersions naming and logic2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611112157515_apparently there%27s a change pending.resx">
+      <DependentUpon>201611112157515_apparently there%27s a change pending.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611112201428_changing primary key of fixversion.resx">
+      <DependentUpon>201611112201428_changing primary key of fixversion.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\201611031223457_Add many-to-many relationship b\" />
+    <Folder Include="Migrations\201611031224454_Add many-to-many relationship b\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
