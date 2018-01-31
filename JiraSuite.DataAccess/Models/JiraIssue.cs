@@ -20,6 +20,7 @@ namespace JiraSuite.DataAccess.Models
     {
         private readonly JiraSuiteDbContext _dbContext = DBContextManager.Instance.DbContext;
         private JavaScriptSerializer _serializer = new JavaScriptSerializer();
+        private List<FixVersion> _fixVersions = new List<FixVersion>();
         
         public string IssueId { get; set; }
         [Key]
@@ -27,7 +28,7 @@ namespace JiraSuite.DataAccess.Models
         public string IssueKey { get; set; }
         public string Description { get; set; }
         public string Summary { get; set; }
-        public FixVersion[] FixVersion { get; set; }
+        public virtual List<FixVersion> FixVersions { get { return _fixVersions; } set { _fixVersions = value; } }
         public List<JiraIssue> IssueLinks { get; set; }
         public string Reporter { get; set; }
         public string Assignee { get; set; }
@@ -45,6 +46,7 @@ namespace JiraSuite.DataAccess.Models
 
         public void UpdateFromExisting(Issue issue)
         {
+            this.FixVersions = FixVersions == null || FixVersions?.Count == 0 ? new List<FixVersion>() : FixVersions; 
             this.Status = UpdateIfDifferent<string>(Status, issue.fields.status.name)?.ToString();
             this.Summary = UpdateIfDifferent<string>(Summary, issue.fields.summary)?.ToString();
             this.Reporter = UpdateIfDifferent<string>(Reporter, issue.fields.reporter.displayName)?.ToString();
@@ -55,14 +57,14 @@ namespace JiraSuite.DataAccess.Models
             this.NetsuiteTicketNumber = issue.fields.customfield_10080;
             try
             {
-                var newFixVersion = _serializer.Deserialize<FixVersion[]>(issue.fields.fixVersions);
+                var newFixVersion = (_serializer.Deserialize<FixVersion[]>(issue.fields.fixVersions)).ToList();
                 var contextualFixVersions = new List<FixVersion>();
-                FixVersion[] versionsToAdd = new FixVersion[0];
-                if (newFixVersion.Length > 0)
+                var fixVersionCopy = this.FixVersions.ToArray();
+                if (newFixVersion.Count > 0)
                 {
                     foreach (FixVersion fixVersion in newFixVersion)
                     {
-                        if (!_dbContext.FixVersions.Contains(fixVersion) && !FixVersion.Contains(fixVersion))
+                        if (!_dbContext.FixVersions.Any() || (!_dbContext.FixVersions.Any(x => x.id == fixVersion.id) && !fixVersionCopy.Contains(fixVersion)))
                         {
                             _dbContext.Entry(fixVersion).State = EntityState.Added;
                             contextualFixVersions.Add(fixVersion);
@@ -71,18 +73,21 @@ namespace JiraSuite.DataAccess.Models
                         {
                             contextualFixVersions.Add(_dbContext.FixVersions.FirstOrDefault(x => x.name == fixVersion.name));
                         }
+                        try
+                        {
+                            _dbContext.SaveChanges();
+                        }
+                        catch { }
 
                     }
-                    Array.Resize<FixVersion>(ref versionsToAdd, contextualFixVersions.Count + FixVersion.Length);
-                    Array.Copy(contextualFixVersions.ToArray(), 0, versionsToAdd, versionsToAdd.Length, contextualFixVersions.Count);
-                    FixVersion = versionsToAdd;
-
+                    FixVersions.AddRange(contextualFixVersions.ToList());
+                    _dbContext.SaveChanges();
                 }
 
             }
             catch (Exception ex)
             {
-                this.FixVersion = new FixVersion[0]; //= _dbContext.FixVersions.Create();
+                this.FixVersions = new List<FixVersion>(); //= _dbContext.FixVersions.Create();
             }
             
             //manage linked netsuite tickets
@@ -178,13 +183,15 @@ namespace JiraSuite.DataAccess.Models
                                     issue.fields.issuelinks.ForEach(i => this.IssueLinks.Add(new JiraIssue() { IssueId = i.id }));
                                     break;
                                 case "fixVersions":
-                                    this.FixVersion =
-                                        _serializer.Deserialize<FixVersion[]>(issue.fields.fixVersions);
+                                    this.FixVersions =
+                                        _serializer.Deserialize<FixVersion[]>(issue.fields.fixVersions).ToList();
                                     break;
                                 case "cucustomfield_10080":
                                     foreach(var ticket in issue.fields.customfield_10080.Split(','))
                                         Console.WriteLine(ticket);
                                     break;
+                                //labels?
+
                             }
 
                         }

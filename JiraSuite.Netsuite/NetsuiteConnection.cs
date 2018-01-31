@@ -39,6 +39,13 @@ namespace JiraSuite.Netsuite
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_netsuiteUrlGetTicketByNumber);
             AddRequestHeaders(request);
+            Uri uri = new Uri("https://rest.na2.netsuite.com");
+            //for debug in ns
+            request.CookieContainer = new CookieContainer();
+            request.CookieContainer.Add(new Cookie("NS_VER","2016.2.0") { Domain = uri.Host });
+            request.CookieContainer.Add(new Cookie("JSESSIONID", "PXpG5FEKCRTXVLZotaXavNiSlZc4E3aXwDUjisc1nYIO00ad_qOb_UX1bbnEVlcBxngcE_vF7Zl28Z-m1E_IvxUnZi8PLCUH3616DHGtklomzS8JOt8xr35dY_Y6gX0V!-101849184") { Domain = uri.Host });
+            request.CookieContainer.Add(new Cookie("ssid11545456236", "CKNX0c2gxXJR2NcUetJX7l_Sk35D150HEPR3CqpT") { Domain = uri.Host });
+
             request.Method = WebRequestMethods.Http.Post;
             using (var writer = new StreamWriter(request.GetRequestStream()))
             {
@@ -57,8 +64,15 @@ namespace JiraSuite.Netsuite
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     var result = reader.ReadToEnd();
-                    Assert.IsTrue(Convert.ToBoolean(result));
-                    NetsuiteApiResult newResult = DeserializeResult(result, _dbContext).FirstOrDefault();
+                    if (string.IsNullOrWhiteSpace(result)) return;
+
+                    var idPart = result.Substring(result.IndexOf(":", 0) + 3);
+                    idPart = idPart.Substring(0, idPart.IndexOf(",") - 1).Replace("\\", "").Replace("\\", "");
+
+                    NetsuiteApiResult newResult = new NetsuiteApiResult()
+                    {
+                        id = idPart
+                    };
                     UpdateExistingTicketWithJiraStatus(newResult, issue);
                 }
             }
@@ -70,6 +84,8 @@ namespace JiraSuite.Netsuite
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(_netsuiteUrlTrackedUpdate);
             AddRequestHeaders(request);
             request.Method = WebRequestMethods.Http.Post;
+            var fixVersionSelector = (from version in jIssue.FixVersions
+                select version.name).ToString();
             using (var writer = new StreamWriter(request.GetRequestStream()))
             {
                 var ser = new JavaScriptSerializer();
@@ -77,7 +93,7 @@ namespace JiraSuite.Netsuite
                 {
                     id = nsTicket.id,
                     jiraStatus = jIssue.Status,
-                    fixVersion = (jIssue.FixVersion != null && jIssue.FixVersion.Length > 0 ? string.Join(",", (object) jIssue.FixVersion) : ""),
+                    fixVersion = (jIssue.FixVersions != null && jIssue.FixVersions.Count > 0 ? fixVersionSelector : ""),
                     priority = "",
                     components = "",
                     type = jIssue.IssueType
@@ -108,6 +124,7 @@ namespace JiraSuite.Netsuite
             using (var stream = new StreamReader(request.GetResponse().GetResponseStream()))
             {
                 var responseObj = stream.ReadToEnd();
+                //multi thread this?
                 allTickets.AddRange(DeserializeResult(responseObj, dbContext));
             }
             return allTickets;
@@ -301,8 +318,11 @@ namespace JiraSuite.Netsuite
             {
                 try
                 {
-                    if (prop.GetValue(thisResult.columns) == null)
-                        prop.SetValue(thisResult.columns, Activator.CreateInstance(prop.PropertyType));
+                    if (prop.GetValue(thisResult.columns) != null) continue;
+                    prop.SetValue(thisResult.columns,
+                        prop.PropertyType.Name.ToLower() != "string"
+                            ? Activator.CreateInstance(prop.PropertyType)
+                            : string.Empty);
                 }
                 catch { }
             }

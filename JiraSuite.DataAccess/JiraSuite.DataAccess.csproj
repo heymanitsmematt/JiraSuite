@@ -117,6 +117,22 @@
     <Compile Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.Designer.cs">
       <DependentUpon>201611080306596_Created entirely new EF model for FixVersionsdaad.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611102207384_Tweak of FixVersions naming and logic.cs" />
+    <Compile Include="Migrations\201611102207384_Tweak of FixVersions naming and logic.Designer.cs">
+      <DependentUpon>201611102207384_Tweak of FixVersions naming and logic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611102211302_Tweak of FixVersions naming and logic2.cs" />
+    <Compile Include="Migrations\201611102211302_Tweak of FixVersions naming and logic2.Designer.cs">
+      <DependentUpon>201611102211302_Tweak of FixVersions naming and logic2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611112157515_apparently there%27s a change pending.cs" />
+    <Compile Include="Migrations\201611112157515_apparently there%27s a change pending.Designer.cs">
+      <DependentUpon>201611112157515_apparently there%27s a change pending.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611112201428_changing primary key of fixversion.cs" />
+    <Compile Include="Migrations\201611112201428_changing primary key of fixversion.Designer.cs">
+      <DependentUpon>201611112201428_changing primary key of fixversion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Assigned.cs" />
     <Compile Include="Models\Category.cs" />
@@ -185,6 +201,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611080306596_Created entirely new EF model for FixVersionsdaad.resx">
       <DependentUpon>201611080306596_Created entirely new EF model for FixVersionsdaad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611102207384_Tweak of FixVersions naming and logic.resx">
+      <DependentUpon>201611102207384_Tweak of FixVersions naming and logic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611102211302_Tweak of FixVersions naming and logic2.resx">
+      <DependentUpon>201611102211302_Tweak of FixVersions naming and logic2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611112157515_apparently there%27s a change pending.resx">
+      <DependentUpon>201611112157515_apparently there%27s a change pending.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611112201428_changing primary key of fixversion.resx">
+      <DependentUpon>201611112201428_changing primary key of fixversion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

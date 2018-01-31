@@ -5,6 +5,7 @@ using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using JiraSuite.DataAccess.EntityFramework;
 using JiraSuite.DataAccess.Models;
 using JiraSuite.Netsuite;
@@ -25,35 +26,38 @@ namespace JiraSuite.Managers
         public void UpdateDb(List<DbEntityValidationException> saveErrors)
         {
             List<NetsuiteApiResult> allTickets = GetAllResults(_dbContext);
-            foreach (NetsuiteApiResult ticket in allTickets.Where(x => !string.IsNullOrWhiteSpace(x.id) && !string.IsNullOrEmpty(x.columns.casenumber)))
-            {
-                try
+            Parallel.ForEach(
+                allTickets.Where(x => !string.IsNullOrWhiteSpace(x.id) && !string.IsNullOrEmpty(x.columns.casenumber)),
+                ticket =>
                 {
-                    for (var i = 0; i < ticket.columns.JiraIssues.Count; i++)
+                    try
                     {
-                        GetExistingForeignKeyReferences(ticket);
-
-                        if (_dbContext.JiraIssues.Find(ticket.columns.JiraIssues[i].IssueKey) != null)
-                            ticket.columns.JiraIssues[i] =
-                                _dbContext.JiraIssues.Find(ticket.columns.JiraIssues[i].IssueKey);
-                        if (!_dbContext.NetsuiteTickets.Any() && !_dbContext.NetsuiteTickets.Any(x => x.id == ticket.id))
+                        for (var i = 0; i < ticket.columns.JiraIssues.Count; i++)
                         {
-                            _dbContext.NetsuiteTickets.Add(ticket);
+                            GetExistingForeignKeyReferences(ticket);
 
-                            _dbContext.Entry(ticket).State = EntityState.Added;
+                            if (_dbContext.JiraIssues.Find(ticket.columns.JiraIssues[i].IssueKey) != null)
+                                ticket.columns.JiraIssues[i] =
+                                    _dbContext.JiraIssues.Find(ticket.columns.JiraIssues[i].IssueKey);
+                            if (!_dbContext.NetsuiteTickets.Any() &&
+                                !_dbContext.NetsuiteTickets.Any(x => x.id == ticket.id))
+                            {
+                                _dbContext.NetsuiteTickets.Add(ticket);
+
+                                _dbContext.Entry(ticket).State = EntityState.Added;
+                            }
+                            else
+                                _dbContext.NetsuiteTickets.AddOrUpdate(ticket);
+                            _dbContext.SaveChanges();
                         }
-                        else
-                            _dbContext.NetsuiteTickets.AddOrUpdate(ticket);
-                        _dbContext.SaveChanges();
                     }
-                }
-                catch (Exception ex)
-                {
-                    DbEntityValidationException item = ex as DbEntityValidationException;
-                    if (item != null)
-                        saveErrors.Add(item);
-                }
-            }
+                    catch (Exception ex)
+                    {
+                        DbEntityValidationException item = ex as DbEntityValidationException;
+                        if (item != null)
+                            saveErrors.Add(item);
+                    }
+                });
         }
 
         private void GetExistingForeignKeyReferences(NetsuiteApiResult ticket)

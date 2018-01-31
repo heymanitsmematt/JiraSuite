@@ -4,6 +4,8 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using JiraSuite.DataAccess.EntityFramework;
 using JiraSuite.DataAccess.Models;
@@ -19,42 +21,38 @@ namespace JiraSuite.Managers
         private JiraConnection _jiraConnection = new JiraConnection();
         private JiraSuiteDbContext _dbContext = DBContextManager.Instance.DbContext;
 
-        public void UpdateDb(List<DbEntityValidationException> saveErrors)
+        public async void UpdateDb(List<DbEntityValidationException> saveErrors)
         {
             List<Issue> allIssues = GetAllIssues();
+            List<Task> threadList = new List<Task>();
             using (_dbContext)
             {
-                foreach (var issue in allIssues.Where(x => !string.IsNullOrWhiteSpace(x.key) && ! string.IsNullOrWhiteSpace(x.fields.customfield_10080)))
-                {
-                    try
+
+                foreach(var issue in allIssues.Where(
+                        x => !string.IsNullOrWhiteSpace(x.key) && !string.IsNullOrWhiteSpace(x.fields.customfield_10080)))
                     {
-                        bool isNew = false;
-                        var thisIssue = GetCreateJiraIssue(issue, out isNew);
-
-                        for (var i = 0; i < thisIssue.NetsuiteTicketNumber?.Split(',').Length; i++)
+                        try
                         {
-                            var thisNumber = thisIssue.NetsuiteTicketNumber.Split(',')[i];
-                            if (_dbContext.NetsuiteTickets.Find(thisNumber) != null)
-                                thisIssue.NetsuiteTickets.Add(_dbContext.NetsuiteTickets.Find(thisNumber));
+                            threadList.Add(new Task(() =>
+                            {
+                                bool isNew = false;
+                                var thisIssue = GetCreateJiraIssue(issue, out isNew);
+
+                                if (isNew)
+                                    _dbContext.Entry(new JiraIssue(issue)).State = EntityState.Added;
+                                else
+                                    _dbContext.JiraIssues.AddOrUpdate(thisIssue);
+                                _dbContext.SaveChanges();
+                            }));
                         }
-
-
-                        if (isNew)
-                            _dbContext.Entry(new JiraIssue(issue)).State = EntityState.Added;
-                        else
+                        catch (Exception ex)
                         {
-                            _dbContext.JiraIssues.AddOrUpdate(thisIssue);
-                            //_dbContext.Entry(thisIssue).State = EntityState.Modified;
+                            DbEntityValidationException item = ex as DbEntityValidationException;
+                            if (item != null)
+                                saveErrors.Add(item);
                         }
-                        _dbContext.SaveChanges();
                     }
-                    catch (Exception ex)
-                    {
-                        DbEntityValidationException item = ex as DbEntityValidationException;
-                        if (item != null)
-                            saveErrors.Add(item);
-                    }
-                }
+                await Task.Factory.StartNew(() => threadList.ForEach(t => t.Start()));
             }
         }
 
@@ -63,14 +61,21 @@ namespace JiraSuite.Managers
             using (_dbContext = DBContextManager.Instance.DbContext)
             {
                 var jiraIssues =_dbContext.JiraIssues.Where(x => x.IssueId == null).ToList();
-                foreach (var issue in jiraIssues)
+                Parallel.ForEach(jiraIssues, issue =>
                 {
-                    Issue newJiraIssue = _jiraConnection.Client.LoadIssue(issue.IssueKey);
+                    try
+                    {
+                        Issue newJiraIssue = _jiraConnection.Client.LoadIssue(issue.IssueKey);
                         // .GetIssuesByQuery(issue.IssueKey.Substring(0, issue.IssueKey.IndexOf('-')), $"key = {issue.IssueKey}").FirstOrDefault();
-                    issue.UpdateFromExisting(newJiraIssue);
-                    _dbContext.Entry(issue).State = EntityState.Modified;
-                    _dbContext.SaveChanges();
-                }
+                        issue.UpdateFromExisting(newJiraIssue);
+                        _dbContext.Entry(issue).State = EntityState.Modified;
+                        _dbContext.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Write($"Error Caught: {e.Message}.");
+                    }
+                });
 
             }
         }
@@ -78,16 +83,17 @@ namespace JiraSuite.Managers
         public List<Issue> GetAllIssues()
         {
             List<Issue> mosoIssues = new List<Issue>();
-            foreach (string software in Enum.GetNames(typeof(SoftwareType)))
+            Parallel.ForEach(Enum.GetNames(typeof (SoftwareType)), software =>
             {
-                foreach (string type in Enum.GetNames(typeof(JiraIssueType)))
+                Parallel.ForEach(Enum.GetNames(typeof (JiraIssueType)), type =>
                 {
                     string jql = "cf[10080] is not empty";
-
-
-                    mosoIssues.AddRange(_jiraConnection.Client.GetIssuesByQuery(software, type, jql, new[] {"customfield_10080", "fixVersions"}).ToList()); //"MCLUB", type, jql, new[] { "customfield_10080", "fixVersions" }).ToList());
-                }
-            }
+                    mosoIssues.AddRange(
+                        _jiraConnection.Client.GetIssuesByQuery(software, type, jql,
+                            new[] {"customfield_10080", "fixVersions"}).ToList());
+                           //"MCLUB", type, jql, new[] { "customfield_10080", "fixVersions" }).ToList());
+                });
+            });
             return mosoIssues;
         }
 
@@ -98,7 +104,11 @@ namespace JiraSuite.Managers
             if (_dbContext.JiraIssues.Any())
             {
                 thisIssue = _dbContext.JiraIssues.FirstOrDefault(x => (x.IssueKey != null) && (issue.key != null) && (x.IssueKey == issue.key));
-                thisIssue.UpdateFromExisting(issue);
+                if (thisIssue != null)
+                {
+                    thisIssue.UpdateFromExisting(issue);
+                    _dbContext.SaveChanges();
+                }
             }
 
             bool state = isNew = string.IsNullOrEmpty(thisIssue?.IssueKey) ? true : false;
